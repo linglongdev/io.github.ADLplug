@@ -1,0 +1,39 @@
+version: "1"
+
+package:
+  id: io.github.ADLplug
+  name: ADLplug
+  version: 1.0.2.1
+  kind: app
+  description: |
+    FM Chip Synthesizer — OPL & OPN — VST/LV2/Standalone
+
+command:
+  - /opt/apps/io.github./files/bin/ADLplug
+
+base: org.deepin.foundation/23.0.0
+runtime: org.deepin.Runtime/23.0.1
+
+sources:
+  - kind: git
+    url: https://github.com/jpcima/ADLplug.git
+    version: master
+    commit: a488abedf1783c61cb4f0caa689f1b01bf9aa17d
+  - kind: file
+    url: http://ftp.cn.debian.org/debian/pool/main/j/jack-audio-connection-kit/libjack-dev_0.125.0-3_amd64.deb
+    digest: 375e782f8f3cd6baf210ac28087078cb39a10a4ac926decc397a78a58625174c
+  - kind: file
+    url: http://ftp.cn.debian.org/debian/pool/main/j/jack-audio-connection-kit/libjack0_0.125.0-3_amd64.deb
+    digest: 59645c64650a34f6a0c297678e36293c1932b92166a03c87041454b2b074efc6
+
+build: |
+  bash ./install_dep linglong/sources $PREFIX
+
+  cd /project/linglong/sources/ADLplug.git
+  mkdir -p build
+  cd build
+  cmake .. \
+        -DCMAKE_INSTALL_PREFIX=${PREFIX} \
+        -DADLplug_Jack=OFF
+  cmake --build . --target install -j$(nproc --all)
+
